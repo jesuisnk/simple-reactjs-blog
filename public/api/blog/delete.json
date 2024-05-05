@@ -1,0 +1,22 @@
+{% set result = 'false' %}
+{% set msg = 'Thao tác không hợp lệ' %}
+{% from 'app.twig' import is_login %}
+{% if is_login() %}
+{% if SERVER_REQUEST_METHOD|lower == 'post' %}
+    {% set blog_id = form_post('id') %}
+    {% if blog_id %}
+        {% set count = get_row_count('blog', {'id':blog_id,'operator':'='}) %}
+        {% if count > 0 %}
+            {% do delete_row_table('blog', 'id', blog_id) %}
+            {% set result = 'true' %}
+            {% set msg = 'Xóa bài thành công' %}
+        {% else %}
+            {% set msg = 'Bài viết không tồn tại' %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+{% endif %}
+{
+    "result" : "{{result}}",
+    "msg" : "{{msg}}"
+}

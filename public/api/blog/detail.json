@@ -1,0 +1,23 @@
+{% set slug = form_get('slug') %}
+{% if slug %}
+{% set count = get_row_count('blog', {'slug':slug,'operator':'='}) %}
+{% if count > 0 %}
+{% set select = select_table_row_data('blog', 'slug', slug) %}
+{
+    "result" : "true",
+    "id" : "{{select.id}}",
+    "category" : "{{select.category}}",
+    "title" : "{{htmlspecialchars(select.title)}}",
+    "content" : "{{htmlspecialchars(select.content)}}",
+    "time" : "{{select.time}}"
+}
+{% else %}
+{
+    "result" : "false"
+}
+{% endif %}
+{% else %}
+{
+    "result" : "false"
+}
+{% endif %}

@@ -1,0 +1,27 @@
+{% set result = 'false' %}
+{% set msg = 'Thao tác không hợp lệ' %}
+{% from 'app.twig' import is_login %}
+{% if is_login() %}
+{% if SERVER_REQUEST_METHOD|lower == 'post' %}
+    {% set blog_id = form_get('id') %}
+    {% set blog = select_table_row_data('blog','id',blog_id) %}
+    {% set category,title,slug,content = form_post('category'),form_post('title'),form_post('slug'),form_post('content') %}
+    {% set check = get_row_count('blog', {'slug':slug,'operator':'='}) %}
+    {% if blog['id'] >= 1 and blog['slug'] == slug or blog['slug'] != slug and check < 1 %}
+        {% if category and title and slug and content %}
+            {% if title|length not in 5..300 %}
+                {% set msg = 'Độ dài tiêu đề bài viết không hợp lệ (min. 10, max. 300)' %}
+            {% else %}
+                {% set row = {'category':category,'title':title,'slug':slug,'content':content} %}
+                {% do update_rows_table('blog', row, {'id':blog_id}) %}
+                {% set result = 'true' %}
+                {% set msg = 'Cập nhật thành công' %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+{% endif %}
+{
+    "result" : "{{result}}",
+    "msg" : "{{msg}}"
+}

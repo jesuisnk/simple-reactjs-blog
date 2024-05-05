@@ -1,0 +1,27 @@
+{% set total = get_table_count('blog') %}
+{% set per = form_get('per')|default(10) %}
+{% set p = form_get('page')|default(1) %}
+{% set page_max = total//per %}
+{% if total//per != total/per %}{% set page_max = total//per+1 %}{% endif %}
+{% if p matches '/[a-zA-z]|%/' or p < 1 %}{% set p = 1 %}{% endif %}
+{% if p > page_max %}{% set p = page_max %}{% endif %}
+{% set st = p*per-per %}
+{% set blog %}{% if total > 0 %}
+{% for select in query_select_table('blog','*','ORDER BY id DESC LIMIT '~st~','~per) %}{% if select.id %}
+{
+    "id" : "{{select.id}}",
+    "category" : "{{select.category}}",
+    "title" : "{{htmlspecialchars(select.title)}}",
+    "slug" : "{{select.slug}}"
+}{% if loop.last == false %},{% endif %}
+{% endif %}{% endfor %}
+{% endif %}{% endset %}
+{
+    "stats" : {
+        "total" : "{{total}}",
+        "page_max" : "{{page_max}}",
+        "current_page" : "{{p}}",
+        "per" : "{{per}}"
+    },
+    "list" : [{{blog}}]
+}

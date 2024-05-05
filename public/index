@@ -1,0 +1,81 @@
+{% set app_name = 'Cấm Quay Tay' %}
+{% set app_description = 'Tinh tế và sâu sắc, trang web cùng bạn khám phá những khía cạnh tinh túy của tâm hồn con người từ những cảm xúc đa dạng đến những suy tư sâu xa. Nơi đây, mọi người có cơ hội thấu hiểu bản thân mình qua từng góc nhìn độc đáo và chân thực, tạo nên một không gian tưởng tượng và cảm xúc sâu lắng' %}
+{% set app_icon = 'https://i.imgur.com/EWVYOhd.png'%}
+{% set app_logo = 'https://i.imgur.com/yiyWCgR.gif' %}
+{% set theme_color = '#22292F' %}
+{% set app_made = '2023' %}
+{% from 'app.twig' import auto %}
+{% set user = get_table_count('users') %}
+{% do create_table_with_column('users', {"user":"TEXT","pass":"TEXT","token":"TEXT","reg":"INTEGER"}) %}
+{% if user == 0 %}
+{% do insert_rows_table('users', {"user":"admin","pass":md5('camquaytay'),"token":md5(auto()),"reg":'now'|date('U')}) %}
+{% endif %}
+{% do create_table_with_column('category', {"title":"TEXT","slug":"TEXT"}) %}
+{% do create_table_with_column('blog', {"category":"INTEGER","title":"TEXT","slug":"TEXT","content":"TEXT","time":"INTEGER"}) %}
+{% do create_table_with_column('chat', {"name":"TEXT","content":"TEXT","time":"INTEGER"}) %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+			const app_name = '{{ app_name }}',
+                app_description = '{{ app_description }}',
+                app_icon = '{{ app_icon }}',
+                app_logo = '{{ app_logo }}',
+                theme_color = '{{ theme_color }}',
+                app_made = '{{ app_made }}';
+            const api = {
+                "auth" : "{{btoa('/api/auth.json')}}",
+                "authLogin" : "{{btoa('/api/Login.json')}}",
+                "CategoryList" : "{{btoa('/api/category/list.json')}}",
+                "CategoryCreator" : "{{btoa('/api/category/creator.json')}}",
+                "CategoryDelete" : "{{btoa('/api/category/delete.json')}}",
+                "CategoryDetail" : "{{btoa('/api/category/detail.json')}}",
+                "BlogCreator" : "{{btoa('/api/blog/creator.json')}}",
+                "BlogEdit" : "{{btoa('/api/blog/edit.json')}}",
+                "BlogDelete" : "{{btoa('/api/blog/delete.json')}}",
+                "BlogList" : "{{btoa('/api/blog/list.json')}}",
+                "BlogPaging" : "{{btoa('/api/blog/paging.json')}}",
+                "BlogContent" : "{{btoa('/api/blog/content.txt')}}"
+            };
+		</script>
+		<meta name="mobile-web-app-capable" content="yes"/>
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+		<meta name="robots" content="index,follow"/>
+		<meta name="googlebot" content="index,follow"/>
+		<meta name="theme-color" content="#22292F"/>
+		<meta name="format-detection" content="telephone=no"/>
+		<title>Cấm Quay Tay</title>
+		<meta name="description" content="{{app_description}}"/>
+		<link rel="shortcut icon" href="{{app_icon}}"/>
+		<meta property="og:site_name" content="{{app_name}}"/>
+		<meta property="og:type" content="website"/>
+		<meta property="og:title" content="{{app_name}}"/>
+		<meta property="og:description" content="{{app_description}}"/>
+		<meta property="og:image" content="{{app_logo}}"/>
+		<meta property="twitter:title" content="{{app_name}}"/>
+		<meta property="twitter:description" content="{{app_description}}"/>
+		<meta property="twitter:image" content="{{app_logo}}"/>
+		<meta property="twitter:card" content="summary"/>
+		<link rel="dns-prefetch" href="https://cdn.statically.io"/>
+		<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com"/>
+		<link rel="dns-prefetch" href="https://raw.githack.com"/>
+		<link rel="dns-prefetch" href="https://cdn.jsdelivr.net"/>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+		<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@200&display=swap" rel="stylesheet"/>
+		<link rel="stylesheet" href="/app.css?v={{'now'|date('U')}}" type="text/css"/>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.11/babel.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/2.0.1/remarkable.min.js"></script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="text/babel" src="/app.js?v={{'now'|date('U')}}"></script>
+	</body>
+</html>

@@ -1,0 +1,25 @@
+{% set result = 'false' %}
+{% set msg = 'Thao tác không hợp lệ' %}
+{% from 'app.twig' import is_login %}
+{% if is_login() %}
+{% if SERVER_REQUEST_METHOD|lower == 'post' %}
+    {% set title, slug = form_post('title'), form_post('slug') %}
+    {% set count = get_row_count('category', {'slug':slug,'operator':'='}) %}
+    {% if title and slug %}
+        {% if title|length not in 5..70 %}
+            {% set msg = 'Độ dài tiêu đề chuyên mục không hợp lệ (min. 5, max. 70)' %}
+        {% elseif count > 0 %}
+            {% set msg = 'Chuyên mục này đã tồn tại' %}
+        {% else %}
+            {% set row_cat = {'title':title,'slug':slug} %}
+            {% do insert_rows_table('category', row_cat) %}
+            {% set result = 'true' %}
+            {% set msg = 'Tạo chuyên mục thành công' %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+{% endif %}
+{
+    "result" : "{{result}}",
+    "msg" : "{{msg}}"
+}

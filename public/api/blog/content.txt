@@ -1,0 +1,10 @@
+{% set slug = form_get('slug') %}
+{% set result = 'false' %}
+{% if slug %}
+{% set count = get_row_count('blog', {'slug':slug,'operator':'='}) %}
+{% if count > 0 %}
+{% set select = select_table_row_data('blog', 'slug', slug) %}
+{% set result = select.content %}
+{% endif %}
+{% endif %}
+{{result|raw}}

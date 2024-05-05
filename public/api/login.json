@@ -1,0 +1,15 @@
+{% set result = 'false' %}
+{% from 'app.twig' import is_login %}
+{% if not is_login() %}
+    {% if SERVER_REQUEST_METHOD|lower == 'post' %}
+        {% set user, pass = form_post('username'), md5(form_post('password')) %}
+        {% set user_data = select_table_row_data_by_where('users', {'user':user,'pass':pass}) %}
+        {% if user_data['user'] == user and user_data['pass'] == pass %}
+            {{set_cookie('username',user_data['token'])}}
+            {% set result = 'true' %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+{
+    "result" : "{{result}}"
+}

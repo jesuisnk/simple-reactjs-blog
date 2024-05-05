@@ -1,0 +1,25 @@
+{% set result = 'false' %}
+{% set msg = 'Thao tác không hợp lệ' %}
+{% from 'app.twig' import is_login %}
+{% if is_login() %}
+{% if SERVER_REQUEST_METHOD|lower == 'post' %}
+    {% set category,title,slug,content = form_post('category'),form_post('title'),form_post('slug'),form_post('content') %}
+    {% if category and title and slug and content %}
+        {% set count = get_row_count('blog', {'slug':slug,'operator':'='}) %}
+        {% if title|length not in 5..300 %}
+            {% set msg = 'Độ dài tiêu đề bài viết không hợp lệ (min. 10, max. 300)' %}
+        {% elseif count > 0 %}
+            {% set msg = 'Tiêu đề bài viết đã tồn tại' %}
+        {% else %}
+            {% set row = {'category':category,'title':title,'slug':slug,'content':content,'time':'now'|date('U')} %}
+            {% do insert_rows_table('blog', row) %}
+            {% set result = 'true' %}
+            {% set msg = 'Đăng bài thành công' %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+{% endif %}
+{
+    "result" : "{{result}}",
+    "msg" : "{{msg}}"
+}

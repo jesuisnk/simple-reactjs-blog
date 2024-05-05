@@ -1,0 +1,9 @@
+{% set blog %}{% for select in select_table_data('blog','id','desc') %}{% if select.id %}
+{
+    "id" : "{{select.id}}",
+    "category" : "{{select.category}}",
+    "title" : "{{htmlspecialchars(select.title)}}",
+    "slug" : "{{select.slug}}"
+}{% if loop.last == false %},{% endif %}
+{% endif %}{% endfor %}{% endset %}
+[{{blog}}]

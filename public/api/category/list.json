@@ -1,0 +1,9 @@
+{% set category %}{% for select in select_table_data('category') %}{% if select.id %}
+{
+    "id" : "{{select.id}}",
+    "title" : "{{select.title}}",
+    "slug" : "{{select.slug}}",
+    "count" : "{{get_row_count('blog', {'category':select.id,'operator':'='})}}"
+}{% if loop.last == false %},{% endif %}
+{% endif %}{% endfor %}{% endset %}
+[{{category}}]
